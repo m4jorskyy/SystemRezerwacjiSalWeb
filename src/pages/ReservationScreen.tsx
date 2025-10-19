@@ -1,5 +1,9 @@
+import {Link} from "react-router-dom";
+
 export default function ReservationScreen() {
     return (
-        <p>elozelo</p>
+        <div>
+            <Link to={"/new"}>Add reservation</Link>
+        </div>
     )
 }
