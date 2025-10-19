@@ -1,30 +1,30 @@
 import {LoaderCircle} from "lucide-react";
-import useLogin from "../hooks/useLogin";
 import Alert from "./Alert";
 import useRegister from "../hooks/useRegister";
 
 export default function RegisterForm(){
     const {
         formData,
+        uiState,
         handleChange,
         handleClose,
     } = useRegister();
 
     return (
         <div className={"flex flex-col justify-center items-center min-h-screen"}>
-            {formData.loading ? (
+            {uiState.loading ? (
                 <LoaderCircle className={"animate-spin"}/>
             ) : null}
 
-            {formData.showAlert ? (
+            {uiState.showAlert ? (
                 <div onClick={handleClose}>
-                    <Alert message={formData.success === "" ? formData.error : formData.success} type={"success"}/>
+                    <Alert message={uiState.success === "" ? uiState.error : uiState.success} type={"success"}/>
                 </div>
             ) : null}
 
             <form className={"flex flex-col justify-center items-center"}>
-                <input name={"firstName"} type={"text"} placeholder={"First name"} value={formData.firstName} onChange={handleChange} required className={"text-center"}/>
-                <input name={"lastName"} type={"text"} placeholder={"Last name"} value={formData.lastName} onChange={handleChange} required className={"text-center"}/>
+                <input name={"firstName"} type={"text"} placeholder={"First name"} value={formData.username} onChange={handleChange} required className={"text-center"}/>
+                <input name={"lastName"} type={"text"} placeholder={"Last name"} value={formData.lastname} onChange={handleChange} required className={"text-center"}/>
                 <input name={"email"} type={"email"} placeholder={"Email"} value={formData.email} onChange={handleChange} required className={"text-center"}/>
                 <input name={"password"} type={"password"} placeholder={"Password"} value={formData.password}
                        onChange={handleChange} required className={"text-center"}/>

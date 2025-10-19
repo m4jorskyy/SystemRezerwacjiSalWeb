@@ -1,10 +1,15 @@
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
+import {LoginRequest} from "../types/LoginRequest";
+import {UiState} from "../types/UiState";
 
 export default function useLogin() {
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<LoginRequest>({
         email: "",
-        password: "",
+        password: ""
+    })
+
+    const [uiState, setUiState] = useState<UiState>({
         loading: false,
         error: "",
         success: "",
@@ -24,7 +29,7 @@ export default function useLogin() {
     }
 
     const handleClose = () => {
-        setFormData(prev => ({
+        setUiState(prev => ({
             ...prev,
             showAlert: false,
             error: "",
@@ -33,17 +38,17 @@ export default function useLogin() {
     }
 
     useEffect(() => {
-        if (formData.error) {
+        if (uiState.error) {
             const timeout = setTimeout(() => {
                 handleClose()
             }, 3000)
 
             return () => clearTimeout(timeout)
         }
-    }, [formData.error])
+    }, [uiState.error])
 
     useEffect(() => {
-        if (formData.success) {
+        if (uiState.success) {
             const timeout = setTimeout(() => {
                 handleClose()
                 navigate("/menu")
@@ -51,10 +56,11 @@ export default function useLogin() {
 
             return () => clearTimeout(timeout)
         }
-    }, [formData.success])
+    }, [navigate, uiState.success])
 
     return {
         formData,
+        uiState,
         handleChange,
         handleClose,
     }

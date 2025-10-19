@@ -5,18 +5,19 @@ import {LoaderCircle} from "lucide-react";
 export default function LoginForm() {
     const {
         formData,
+        uiState,
         handleChange,
         handleClose,
     } = useLogin();
 
     return (
         <div className={"flex flex-col justify-center items-center min-h-screen"}>
-            {formData.loading ? (
+            {uiState.loading ? (
                 <LoaderCircle className={"animate-spin"}/>
             ) : null}
-            {formData.showAlert ? (
+            {uiState.showAlert ? (
                 <div onClick={handleClose}>
-                    <Alert message={formData.success === "" ? formData.error : formData.success} type={"success"}/>
+                    <Alert message={uiState.success === "" ? uiState.error : uiState.success} type={"success"}/>
                 </div>
             ) : null}
             <form className={"flex flex-col justify-center items-center"}>

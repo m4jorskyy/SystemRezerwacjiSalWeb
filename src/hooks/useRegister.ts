@@ -1,12 +1,17 @@
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
+import {UiState} from "../types/UiState";
+import RegisterRequest from "../types/RegisterRequest";
 
 export default function useRegister() {
-    const [formData, setFormData] = useState({
-        firstName: "",
-        lastName: "",
+    const [formData, setFormData] = useState<RegisterRequest>({
+        username: "",
+        lastname: "",
         email: "",
         password: "",
+    })
+
+    const [uiState, setUiState] = useState<UiState>({
         loading: false,
         error: "",
         success: "",
@@ -26,7 +31,7 @@ export default function useRegister() {
     }
 
     const handleClose = () => {
-        setFormData(prev => ({
+        setUiState(prev => ({
             ...prev,
             showAlert: false,
             error: "",
@@ -35,17 +40,17 @@ export default function useRegister() {
     }
 
     useEffect(() => {
-        if (formData.error) {
+        if (uiState.error) {
             const timeout = setTimeout(() => {
                 handleClose()
             }, 3000)
 
             return () => clearTimeout(timeout)
         }
-    }, [formData.error])
+    }, [uiState.error])
 
     useEffect(() => {
-        if (formData.success) {
+        if (uiState.success) {
             const timeout = setTimeout(() => {
                 handleClose()
                 navigate("/login")
@@ -53,11 +58,12 @@ export default function useRegister() {
 
             return () => clearTimeout(timeout)
         }
-    }, [formData.success])
+    }, [navigate, uiState.success])
 
     return {
         formData,
+        uiState,
         handleChange,
-        handleClose,
+        handleClose
     }
 }
