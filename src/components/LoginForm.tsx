@@ -6,6 +6,7 @@ export default function LoginForm() {
     const {
         formData,
         uiState,
+        handleLogin,
         handleChange,
         handleClose,
     } = useLogin();
@@ -20,7 +21,7 @@ export default function LoginForm() {
                     <Alert message={uiState.success === "" ? uiState.error : uiState.success} type={"success"}/>
                 </div>
             ) : null}
-            <form className={"flex flex-col justify-center items-center"}>
+            <form onSubmit={handleLogin} className={"flex flex-col justify-center items-center"}>
                 <input name={"email"} type={"email"} placeholder={"Email"} value={formData.email} onChange={handleChange}
                        required className={"text-center"}/>
                 <input name={"password"} type={"password"} placeholder={"Password"} value={formData.password}

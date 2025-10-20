@@ -6,6 +6,7 @@ export default function RegisterForm(){
     const {
         formData,
         uiState,
+        handleRegister,
         handleChange,
         handleClose,
     } = useRegister();
@@ -22,9 +23,9 @@ export default function RegisterForm(){
                 </div>
             ) : null}
 
-            <form className={"flex flex-col justify-center items-center"}>
-                <input name={"firstName"} type={"text"} placeholder={"First name"} value={formData.username} onChange={handleChange} required className={"text-center"}/>
-                <input name={"lastName"} type={"text"} placeholder={"Last name"} value={formData.lastname} onChange={handleChange} required className={"text-center"}/>
+            <form onSubmit={handleRegister} className={"flex flex-col justify-center items-center"}>
+                <input name={"firstname"} type={"text"} placeholder={"First name"} value={formData.username} onChange={handleChange} required className={"text-center"}/>
+                <input name={"lastname"} type={"text"} placeholder={"Last name"} value={formData.lastname} onChange={handleChange} required className={"text-center"}/>
                 <input name={"email"} type={"email"} placeholder={"Email"} value={formData.email} onChange={handleChange} required className={"text-center"}/>
                 <input name={"password"} type={"password"} placeholder={"Password"} value={formData.password}
                        onChange={handleChange} required className={"text-center"}/>

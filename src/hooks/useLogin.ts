@@ -1,7 +1,10 @@
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {LoginRequest} from "../types/LoginRequest";
+import LoginRequest from "../types/LoginRequest";
 import {UiState} from "../types/UiState";
+import postLogin from "../api/auth/login";
+import LoginResponse from "../types/LoginResponse";
+import axios from "axios";
 
 export default function useLogin() {
     const [formData, setFormData] = useState<LoginRequest>({
@@ -18,7 +21,41 @@ export default function useLogin() {
 
     const navigate = useNavigate()
 
-    //TODO handleLogin
+    const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+        if(e) e.preventDefault()
+        setUiState(prev => ({
+            ...prev,
+            loading: true
+        }))
+
+        try {
+            const data: LoginResponse = await postLogin(formData)
+            //TODO: username, role, JWT token storing
+            setUiState({
+                loading: false,
+                success: "Login successful!",
+                error: "",
+                showAlert: true
+            })
+        } catch (error) {
+            if(axios.isAxiosError(error)) {
+                const errorMessage: string = error.response?.data?.message || "Login failed. Try again."
+                setUiState({
+                    loading: false,
+                    success: "",
+                    error: errorMessage,
+                    showAlert: true
+                })
+            } else {
+                setUiState({
+                    loading: false,
+                    success: "",
+                    error: "Unexpected error. Try again.",
+                    showAlert: true
+                })
+            }
+        }
+    }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {name, value} = e.target
@@ -29,12 +66,12 @@ export default function useLogin() {
     }
 
     const handleClose = () => {
-        setUiState(prev => ({
-            ...prev,
-            showAlert: false,
+        setUiState({
+            loading: false,
+            success: "",
             error: "",
-            success: ""
-        }))
+            showAlert: false
+        })
     }
 
     useEffect(() => {
@@ -61,6 +98,7 @@ export default function useLogin() {
     return {
         formData,
         uiState,
+        handleLogin,
         handleChange,
         handleClose,
     }
