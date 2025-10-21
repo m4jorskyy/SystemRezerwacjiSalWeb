@@ -1,4 +1,4 @@
-export interface AddRoomRequest {
+export default interface AddRoomRequest {
     name: string
     building: string
     capacity: number

@@ -1,4 +1,4 @@
-export interface AddRoomResponse {
+export default interface AddRoomResponse {
     id: number
     name: string
     building: string
