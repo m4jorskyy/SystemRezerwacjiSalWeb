@@ -10,11 +10,10 @@ const api: AxiosInstance = axios.create({
 
 api.interceptors.request.use(
     (config) => {
-        const token: string = ""//TODO token storing
         const isEndpoint: boolean | undefined = config.url?.includes("/login") || config.url?.includes("/register") //check if url that api call uses contains /users/login or /users/register
 
-        if(!isEndpoint && token) { //if url does not contain /login or /register and JWT token is up to date add Bearer token and Authorization header to api instance config
-            config.headers.Authorization = `Bearer ${token}`
+        if(!isEndpoint) { //if url does not contain /login or /register and JWT token is up to date, include token that is stored in the cookie
+            config.withCredentials = true
         }
 
         return config

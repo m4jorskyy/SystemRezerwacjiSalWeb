@@ -2,9 +2,10 @@ import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import LoginRequest from "../types/LoginRequest";
 import {UiState} from "../types/UiState";
-import postLogin from "../api/auth/login";
 import LoginResponse from "../types/LoginResponse";
 import axios from "axios";
+import login from "../api/auth/login";
+import {useAuth} from "../context/AuthContext";
 
 export default function useLogin() {
     const [formData, setFormData] = useState<LoginRequest>({
@@ -20,6 +21,7 @@ export default function useLogin() {
     })
 
     const navigate = useNavigate()
+    const { setUser } = useAuth()
 
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         if(e) e.preventDefault()
@@ -29,8 +31,10 @@ export default function useLogin() {
         }))
 
         try {
-            const data: LoginResponse = await postLogin(formData)
-            //TODO: username, role, JWT token storing
+            const data: LoginResponse = await login(formData)
+
+            setUser(data)
+
             setUiState({
                 loading: false,
                 success: "Login successful!",

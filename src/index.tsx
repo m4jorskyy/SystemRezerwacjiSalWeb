@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from 'react-router';
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
+import {AuthProvider} from "./context/AuthContext";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -27,7 +28,9 @@ root.render(
     <React.StrictMode>
         <QueryClientProvider client={queryClient}>
             <BrowserRouter>
-                <App/>
+                <AuthProvider>
+                    <App/>
+                </AuthProvider>
             </BrowserRouter>
         </QueryClientProvider>
     </React.StrictMode>
