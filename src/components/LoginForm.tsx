@@ -18,7 +18,7 @@ export default function LoginForm() {
             ) : null}
             {uiState.showAlert ? (
                 <div onClick={handleClose}>
-                    <Alert message={uiState.success === "" ? uiState.error : uiState.success} type={"success"}/>
+                    <Alert message={uiState.success === "" ? uiState.error : uiState.success} type={uiState.success === "" ? "error" : "success"}/>
                 </div>
             ) : null}
             <form onSubmit={handleLogin} className={"flex flex-col justify-center items-center"}>

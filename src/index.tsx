@@ -4,15 +4,32 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from 'react-router';
+import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
 );
+
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            staleTime: Infinity,           // nigdy nie przeterminowuje danych
+            gcTime: Infinity,           // trzyma cache dopóki działa apka
+            refetchOnWindowFocus: false,   // nie fetchuje po powrocie okna
+            refetchOnReconnect: false,     // nie fetchuje po przywróceniu sieci
+            refetchOnMount: false,         // nie fetchuje przy remoncie komponentu
+            retry: 2
+        }
+    }
+})
+
 root.render(
     <React.StrictMode>
-        <BrowserRouter>
-            <App/>
-        </BrowserRouter>
+        <QueryClientProvider client={queryClient}>
+            <BrowserRouter>
+                <App/>
+            </BrowserRouter>
+        </QueryClientProvider>
     </React.StrictMode>
 );
 

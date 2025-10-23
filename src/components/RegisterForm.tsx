@@ -19,7 +19,7 @@ export default function RegisterForm(){
 
             {uiState.showAlert ? (
                 <div onClick={handleClose}>
-                    <Alert message={uiState.success === "" ? uiState.error : uiState.success} type={"success"}/>
+                    <Alert message={uiState.success === "" ? uiState.error : uiState.success} type={uiState.success === "" ? "error" : "success"}/>
                 </div>
             ) : null}
 
