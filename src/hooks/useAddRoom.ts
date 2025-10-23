@@ -1,19 +1,20 @@
 import React, {useEffect, useState} from "react";
-import {AddReservationRequest} from "../types/AddReservationRequest";
+import AddRoomRequest from "../types/AddRoomRequest";
 import {UiState} from "../types/UiState";
 import {useNavigate} from "react-router-dom";
-import {useAuth} from "../context/AuthContext";
 import axios from "axios";
-import addReservation from "../api/reservations/addReservation";
-import {AddReservationResponse} from "../types/AddReservationResponse";
+import AddRoomResponse from "../types/AddRoomResponse";
+import addRoom from "../api/rooms/addRoom";
 
-export default function useAddReservation() {
-    const [formData, setFormData] = useState<AddReservationRequest>({
-        roomId: 0,
-        userId: 0,
-        startTime: "",
-        endTime: "",
-        title: ""
+export default function useAddRoom() {
+    const [formData, setFormData] = useState<AddRoomRequest>({
+        name: "",
+        building: "",
+        capacity: 0,
+        floor: 0,
+        whiteboard: false,
+        projector: false,
+        desks: false
     })
 
     const [uiState, setUiState] = useState<UiState>({
@@ -24,11 +25,9 @@ export default function useAddReservation() {
     })
 
     const navigate = useNavigate()
-    const { user } = useAuth()
 
-    const handleAddReservation = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleAddRoom = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        if (!user) return;
 
         setUiState(prev => ({
             ...prev,
@@ -36,26 +35,28 @@ export default function useAddReservation() {
         }))
 
         try {
-            const request: AddReservationRequest = {...formData, userId: user?.id}
-            const response: AddReservationResponse = await addReservation(request)
+            const response: AddRoomResponse = await addRoom(formData)
 
             setUiState({
                 loading: false,
-                success: "Reservation added successfully!",
+                success: "Room added successfully!",
                 error: "",
                 showAlert: true
             })
 
             setFormData({
-                roomId: 0,
-                userId: 0,
-                startTime: "",
-                endTime: "",
-                title: ""
-            })
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                const errorMessage: string = error.response?.data?.message || "Adding reservation failed. Try again."
+                name: "",
+                building: "",
+                capacity: 0,
+                floor: 0,
+                whiteboard: false,
+                projector: false,
+                desks: false
+            });
+
+        } catch (error){
+            if(axios.isAxiosError(error)) {
+                const errorMessage: string = error.response?.data?.message || "Adding room failed. Try again."
                 setUiState({
                     loading: false,
                     success: "",
@@ -74,10 +75,10 @@ export default function useAddReservation() {
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const {name, value} = e.target
+        const {name, type, value, checked} = e.target
         setFormData(prev => ({
             ...prev,
-            [name]: value
+            [name]: type === "checkbox" ? checked : value
         }))
     }
 
@@ -113,10 +114,9 @@ export default function useAddReservation() {
 
     return {
         formData,
-        setFormData,
         uiState,
-        handleAddReservation,
+        handleAddRoom,
         handleChange,
-        handleClose,
+        handleClose
     }
 }
