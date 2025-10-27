@@ -8,6 +8,7 @@ import ReservationScreen from "./pages/ReservationScreen";
 import AddReservationScreen from "./pages/AddReservationScreen";
 import ProtectedRoute from "./pages/ProtectedRoute";
 import AddRoomScreen from "./pages/AddRoomScreen";
+import ShowRoomsScreen from "./pages/ShowRoomsScreen";
 
 export default function App() {
 
@@ -22,6 +23,11 @@ export default function App() {
                 <ProtectedRoute>
                     <AddRoomScreen />
                 </ProtectedRoute>
+            } />
+            <Route path={"/rooms/show"} element={
+                // <ProtectedRoute>
+                    <ShowRoomsScreen />
+                //</ProtectedRoute>
             } />
         </Routes>
     );

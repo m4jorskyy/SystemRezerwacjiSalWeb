@@ -1,7 +1,7 @@
 import Room from "../types/Room";
 
 interface RoomCardProps extends Room {
-    onClick: () => void;
+    onClick?: () => void;
 }
 
 export default function RoomCard({id, name, building, capacity, floor, whiteboard, projector, desks, onClick}: RoomCardProps) {

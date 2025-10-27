@@ -5,13 +5,6 @@ import Room from "../types/Room";
 
 export default function useFindRooms(startTime: string, endTime: string) {
     const request: RoomFilterRequest = {
-        name: null,
-        building: null,
-        capacity: null,
-        floor: null,
-        whiteboard: null,
-        projector: null,
-        desks: null,
         startTime: startTime,
         endTime: endTime,
     }
