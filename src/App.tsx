@@ -10,6 +10,8 @@ import ProtectedRoute from "./pages/ProtectedRoute";
 import AddRoomScreen from "./pages/AddRoomScreen";
 import ShowRoomsScreen from "./pages/ShowRoomsScreen";
 import EditRoomScreen from "./pages/EditRoomScreen";
+import EditReservationScreen from "./pages/EditReservationScreen";
+import ShowReservationScreen from "./pages/ShowReservationScreen";
 
 export default function App() {
 
@@ -35,6 +37,12 @@ export default function App() {
                     <EditRoomScreen/>
                 </ProtectedRoute>
             }/>
+            <Route path={"/reservations/edit/:id"} element={
+                <EditReservationScreen />
+            } />
+            <Route path={"reservations/show"} element={
+                <ShowReservationScreen />
+            } />
         </Routes>
     );
 

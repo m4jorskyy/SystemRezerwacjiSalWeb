@@ -11,7 +11,11 @@ import useDeleteRoom from "../hooks/useDeleteRoom";
 import {useQueryClient} from "@tanstack/react-query";
 
 export default function ShowRoomsScreen() {
-    const {data: rooms, isLoading, isError, error} = useShowRooms()
+    const {data: rooms,
+        isLoading,
+        isError,
+        error
+    } = useShowRooms()
     const [showConfirmation, setShowConfirmation] = useState(false)
     const [room, setRoom] = useState<Room | null>(null)
     const navigate = useNavigate()

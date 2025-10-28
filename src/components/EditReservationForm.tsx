@@ -1,18 +1,18 @@
-import useAddReservation from "../hooks/useAddReservation";
 import {LoaderCircle} from "lucide-react";
 import Alert from "./Alert";
-import useFindRooms from "../hooks/useFindRooms";
 import RoomCard from "./RoomCard";
+import useFindRooms from "../hooks/useFindRooms";
+import useEditReservation from "../hooks/useEditReservation";
 
-export default function AddReservationForm() {
+export default function EditReservationForm() {
     const {
         formData,
         setFormData,
         uiState,
-        handleAddReservation,
+        handleEditReservation,
         handleChange,
-        handleClose,
-    } = useAddReservation();
+        handleClose
+    } = useEditReservation()
 
     const now = new Date()
     const minValue = now.toISOString().slice(0, 16)
@@ -25,7 +25,7 @@ export default function AddReservationForm() {
         refetch: roomsRefetch
     } = useFindRooms(formData.startTime, formData.endTime)
 
-    const enableFindRooms = !!formData.startTime && !!formData.endTime && (formData.startTime < formData.endTime)
+    const enableFindRooms = !!formData.startTime && !!formData.startTime
 
     return (
         <div className={"flex flex-col justify-center items-center min-h-screen"}>
@@ -40,7 +40,7 @@ export default function AddReservationForm() {
                 </div>
             ) : null}
 
-            <form onSubmit={handleAddReservation}>
+            <form onSubmit={handleEditReservation}>
                 <input name={"title"} type={"text"} value={formData.title} onChange={handleChange} placeholder={"Title"} required className={"text-center"}/>
                 <input name={"startTime"} type={"datetime-local"} value={formData.startTime} min={minValue} onChange={handleChange} required className={"text-center"}/>
                 <input name={"endTime"} type={"datetime-local"} value={formData.endTime} min={formData.startTime} onChange={handleChange} required className={"text-center"}/>
@@ -62,7 +62,7 @@ export default function AddReservationForm() {
                     ))}
                 </div>
 
-                <input type={"submit"} value={"Add reservation"} />
+                <input type={"submit"} value={"Edit reservation"} />
             </form>
         </div>
     )
