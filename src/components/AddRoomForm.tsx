@@ -33,11 +33,11 @@ export default function AddRoomForm() {
 
                 <input name={"floor"} type={"number"} value={formData.floor} onChange={handleChange} placeholder={"Floor"} required className={"text-center"} />
 
-                <input name={"whiteboard"} type={"checkbox"} checked={formData.whiteboard} onChange={handleChange} required className={"text-center"} />
+                <input name={"whiteboard"} type={"checkbox"} checked={formData.whiteboard} onChange={handleChange} className={"text-center"} />
 
-                <input name={"projector"} type={"checkbox"} checked={formData.projector} onChange={handleChange} required className={"text-center"} />
+                <input name={"projector"} type={"checkbox"} checked={formData.projector} onChange={handleChange} className={"text-center"} />
 
-                <input name={"desks"} type={"checkbox"} checked={formData.desks} onChange={handleChange} required className={"text-center"} />
+                <input name={"desks"} type={"checkbox"} checked={formData.desks} onChange={handleChange} className={"text-center"} />
 
                 <input type={"submit"} value={"Add room"}/>
             </form>
