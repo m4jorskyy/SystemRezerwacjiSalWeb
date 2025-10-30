@@ -3,6 +3,7 @@ import Alert from "./Alert";
 import RoomCard from "./RoomCard";
 import useFindRooms from "../hooks/useFindRooms";
 import useEditReservation from "../hooks/useEditReservation";
+import {Link} from "react-router-dom";
 
 export default function EditReservationForm() {
     const {
@@ -40,7 +41,7 @@ export default function EditReservationForm() {
                 </div>
             ) : null}
 
-            <form onSubmit={handleEditReservation}>
+            <form onSubmit={handleEditReservation} className={"flex flex-col justify-center items-center"}>
                 <input name={"title"} type={"text"} value={formData.title} onChange={handleChange} placeholder={"Title"} required className={"text-center"}/>
                 <input name={"startTime"} type={"datetime-local"} value={formData.startTime} min={minValue} onChange={handleChange} required className={"text-center"}/>
                 <input name={"endTime"} type={"datetime-local"} value={formData.endTime} min={formData.startTime} onChange={handleChange} required className={"text-center"}/>
@@ -64,6 +65,7 @@ export default function EditReservationForm() {
 
                 <input type={"submit"} value={"Edit reservation"} />
             </form>
+            <Link to={"/menu"}>Go back</Link>
         </div>
     )
 }

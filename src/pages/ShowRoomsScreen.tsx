@@ -4,7 +4,7 @@ import {motion} from "motion/react"
 import {useState} from "react";
 import {LoaderCircle} from "lucide-react";
 import Alert from "../components/Alert";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import Room from "../types/Room";
 import ConfirmationCard from "../components/ConfirmationCard";
 import useDeleteRoom from "../hooks/useDeleteRoom";
@@ -87,6 +87,8 @@ export default function ShowRoomsScreen() {
                     <RoomCard {...room} />
                 </motion.div>
             ))}
+
+            <Link to={"/menu"}>Go back</Link>
         </div>
     )
 }

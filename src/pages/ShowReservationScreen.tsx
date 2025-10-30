@@ -1,6 +1,6 @@
 import useShowReservations from "../hooks/useShowReservations";
 import {useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {useQueryClient} from "@tanstack/react-query";
 import Reservation from "../types/Reservation";
 import {LoaderCircle} from "lucide-react";
@@ -89,6 +89,8 @@ export default function ShowReservationScreen() {
                     <ReservationCard {...reservation} />
                 </motion.div>
             ))}
+
+            <Link to={"/menu"}>Go back</Link>
         </div>
     )
 }

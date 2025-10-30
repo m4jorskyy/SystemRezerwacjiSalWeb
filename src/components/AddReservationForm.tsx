@@ -3,6 +3,7 @@ import {LoaderCircle} from "lucide-react";
 import Alert from "./Alert";
 import useFindRooms from "../hooks/useFindRooms";
 import RoomCard from "./RoomCard";
+import {Link} from "react-router-dom";
 
 export default function AddReservationForm() {
     const {
@@ -40,8 +41,8 @@ export default function AddReservationForm() {
                 </div>
             ) : null}
 
-            <form onSubmit={handleAddReservation}>
-                <input name={"title"} type={"text"} value={formData.title} onChange={handleChange} placeholder={"Title"} required className={"text-center"}/>
+            <form onSubmit={handleAddReservation} className={"flex flex-col justify-center items-center gap-4 rounded-lg border-2"}>
+                <input name={"title"} type={"text"} value={formData.title} onChange={handleChange} placeholder={"Title"} required className={"text-center rounded-lg"}/>
                 <input name={"startTime"} type={"datetime-local"} value={formData.startTime} min={minValue} onChange={handleChange} required className={"text-center"}/>
                 <input name={"endTime"} type={"datetime-local"} value={formData.endTime} min={formData.startTime} onChange={handleChange} required className={"text-center"}/>
 
@@ -62,8 +63,10 @@ export default function AddReservationForm() {
                     ))}
                 </div>
 
-                <input type={"submit"} value={"Add reservation"} />
+                <input type={"submit"} value={"Add reservation"} className={"cursor-pointer"}/>
             </form>
+
+            <Link to={"/menu"}>Go back</Link>
         </div>
     )
 }

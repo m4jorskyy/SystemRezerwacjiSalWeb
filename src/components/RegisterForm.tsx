@@ -1,6 +1,7 @@
 import {LoaderCircle} from "lucide-react";
 import Alert from "./Alert";
 import useRegister from "../hooks/useRegister";
+import { Link } from "react-router-dom";
 
 export default function RegisterForm(){
     const {
@@ -24,13 +25,21 @@ export default function RegisterForm(){
             ) : null}
 
             <form onSubmit={handleRegister} className={"flex flex-col justify-center items-center"}>
-                <input name={"firstname"} type={"text"} placeholder={"First name"} value={formData.username} onChange={handleChange} required className={"text-center"}/>
-                <input name={"lastname"} type={"text"} placeholder={"Last name"} value={formData.lastname} onChange={handleChange} required className={"text-center"}/>
-                <input name={"email"} type={"email"} placeholder={"Email"} value={formData.email} onChange={handleChange} required className={"text-center"}/>
-                <input name={"password"} type={"password"} placeholder={"Password"} value={formData.password}
-                       onChange={handleChange} required className={"text-center"}/>
+                <label htmlFor="firstname">First name:</label>
+                <input id="firstname" name={"firstname"} type={"text"} placeholder={"First name"} value={formData.username} onChange={handleChange} required className={"text-center"}/>
+
+                <label htmlFor="lastname">Last name:</label>
+                <input id="lastname" name={"lastname"} type={"text"} placeholder={"Last name"} value={formData.lastname} onChange={handleChange} required className={"text-center"}/>
+
+                <label htmlFor="email">Email:</label>
+                <input id="email" name={"email"} type={"email"} placeholder={"Email"} value={formData.email} onChange={handleChange} required className={"text-center"}/>
+
+                <label htmlFor="password">Password:</label>
+                <input id="password" name={"password"} type={"password"} placeholder={"Password"} value={formData.password} onChange={handleChange} required className={"text-center"}/>
+
                 <input name={"submit"} type={"submit"} value={"Sign up"} className={"cursor-pointer"}/>
             </form>
+            <Link to={"/"}>Go back</Link>
         </div>
     )
 }

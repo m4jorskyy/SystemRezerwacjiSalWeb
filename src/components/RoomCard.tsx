@@ -7,7 +7,7 @@ interface RoomCardProps extends Room {
 export default function RoomCard({id, name, building, capacity, floor, whiteboard, projector, desks, onClick}: RoomCardProps) {
     return (
         <div
-            className="flex flex-col justify-center items-center border rounded-lg p-4 hover:bg-gray-100 cursor-pointer transition"
+            className="flex flex-col justify-center items-center border rounded-lg p-4 hover:bg-gray-100 cursor-pointer transition mb-4"
             onClick={onClick}
         >
             <p>{name}</p>
