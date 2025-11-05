@@ -18,6 +18,12 @@ export default function ShowReservationScreen() {
         error
     } = useShowReservations()
 
+    const now = Date.now()
+    const upcomingOngoingReservations = reservations?.filter(reservation => {
+        const endTimeMs = new Date(reservation.endTime).getTime()
+        return endTimeMs >= now
+    })
+
     const [showConfirmation, setShowConfirmation] = useState(false)
     const [reservation, setReservation] = useState<Reservation | null>(null)
     const navigate = useNavigate()
@@ -75,7 +81,7 @@ export default function ShowReservationScreen() {
                 />
             )}
 
-            {reservations?.map(reservation => (
+            {upcomingOngoingReservations?.map(reservation => (
                 <motion.div
                     key={reservation.id}
                     drag={!deleteReservationUiState.loading ? "x" : false}

@@ -16,6 +16,10 @@ export default function ReservationScreen() {
                 <Link to="/reservations/show" className="text-blue-500 hover:underline">
                     Show My Reservations
                 </Link>
+                <Link to="/reservations/history" className="text-blue-500 hover:underline">
+                    Show My Reservations History
+                </Link>
+
             </div>
 
             {user?.role === "ADMIN" ? (

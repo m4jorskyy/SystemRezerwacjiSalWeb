@@ -12,6 +12,7 @@ import ShowRoomsScreen from "./pages/ShowRoomsScreen";
 import EditRoomScreen from "./pages/EditRoomScreen";
 import EditReservationScreen from "./pages/EditReservationScreen";
 import ShowReservationScreen from "./pages/ShowReservationScreen";
+import ShowReservationHistoryScreen from "./pages/ShowReservationHistoryScreen";
 
 export default function App() {
 
@@ -38,10 +39,13 @@ export default function App() {
                 </ProtectedRoute>
             }/>
             <Route path={"/reservations/edit/:id"} element={
-                <EditReservationScreen />
-            } />
+                <EditReservationScreen/>
+            }/>
             <Route path={"reservations/show"} element={
-                <ShowReservationScreen />
+                <ShowReservationScreen/>
+            }/>
+            <Route path={"/reservations/history"} element={
+                <ShowReservationHistoryScreen />
             } />
         </Routes>
     );
