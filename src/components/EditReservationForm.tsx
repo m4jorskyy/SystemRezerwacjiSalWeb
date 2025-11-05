@@ -4,6 +4,9 @@ import RoomCard from "./RoomCard";
 import useFindRooms from "../hooks/useFindRooms";
 import useEditReservation from "../hooks/useEditReservation";
 import {Link} from "react-router-dom";
+import {useState} from "react";
+import RoomFilterRequest from "../types/RoomFilterRequest";
+import useDebounce from "../hooks/useDebounce";
 
 export default function EditReservationForm() {
     const {
@@ -18,15 +21,38 @@ export default function EditReservationForm() {
     const now = new Date()
     const minValue = now.toISOString().slice(0, 16)
 
+    const [extraFilters, setExtraFilters] = useState({
+        capacity: 0,
+        whiteboard: false,
+        projector: false,
+        desks: false
+    })
+
+    const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const {name, type, value, checked} = e.target
+        setExtraFilters(prev => ({
+            ...prev,
+            [name]: type === "checkbox" ? checked : value
+        }))
+    }
+
+    const minCapacity: number = 2
+
+    const roomFilterRequest: RoomFilterRequest = {
+        startTime: formData.startTime,
+        endTime: formData.endTime,
+        ...extraFilters
+    }
+
+    const debouncedRoomFilterRequest = useDebounce(roomFilterRequest, 1000)
+
+
     const {
         data: rooms,
         isLoading: isRoomsLoading,
         isError: isRoomError,
         error: roomsError,
-        refetch: roomsRefetch
-    } = useFindRooms(formData.startTime, formData.endTime)
-
-    const enableFindRooms = !!formData.startTime && !!formData.startTime
+    } = useFindRooms(debouncedRoomFilterRequest)
 
     return (
         <div className={"flex flex-col justify-center items-center min-h-screen"}>
@@ -42,12 +68,33 @@ export default function EditReservationForm() {
             ) : null}
 
             <form onSubmit={handleEditReservation} className={"flex flex-col justify-center items-center"}>
-                <input name={"title"} type={"text"} value={formData.title} onChange={handleChange} placeholder={"Title"} required className={"text-center"}/>
-                <input name={"startTime"} type={"datetime-local"} value={formData.startTime} min={minValue} onChange={handleChange} required className={"text-center"}/>
-                <input name={"endTime"} type={"datetime-local"} value={formData.endTime} min={formData.startTime} onChange={handleChange} required className={"text-center"}/>
+                <input name={"title"} type={"text"} value={formData.title} onChange={handleChange} placeholder={"Title"}
+                       required className={"text-center"}/>
+                <input name={"startTime"} type={"datetime-local"} value={formData.startTime} min={minValue}
+                       onChange={handleChange} required className={"text-center"}/>
+                <input name={"endTime"} type={"datetime-local"} value={formData.endTime} min={formData.startTime}
+                       onChange={handleChange} required className={"text-center"}/>
 
-                <button onClick={() => roomsRefetch()} disabled={!enableFindRooms} title={enableFindRooms ? "Click to find available rooms!" : "Choose proper start time and end time of reservation!"} className={"cursor-pointer"}>Find rooms
-                </button>
+                <input name={"capacity"} type={"number"} min={minCapacity} value={extraFilters.capacity}
+                       onChange={handleFilterChange} placeholder={"e.g. 2"}/>
+
+                <label htmlFor="whiteboard">
+                    <input id="whiteboard" name={"whiteboard"} type={"checkbox"} checked={extraFilters.whiteboard}
+                           onChange={handleFilterChange} className={"text-center"}/>
+                    Whiteboard
+                </label>
+
+                <label htmlFor="projector">
+                    <input id="projector" name={"projector"} type={"checkbox"} checked={extraFilters.projector}
+                           onChange={handleFilterChange} className={"text-center"}/>
+                    Projector
+                </label>
+
+                <label htmlFor="desks">
+                    <input id="desks" name={"desks"} type={"checkbox"} checked={extraFilters.desks}
+                           onChange={handleFilterChange} className={"text-center"}/>
+                    Desks
+                </label>
 
                 {isRoomsLoading ? (
                     <LoaderCircle className={"animate-spin"}/>
@@ -63,7 +110,7 @@ export default function EditReservationForm() {
                     ))}
                 </div>
 
-                <input type={"submit"} value={"Edit reservation"} />
+                <input type={"submit"} value={"Edit reservation"} disabled={uiState.loading || isRoomsLoading || formData.roomId === 0}/>
             </form>
             <Link to={"/menu"}>Go back</Link>
         </div>

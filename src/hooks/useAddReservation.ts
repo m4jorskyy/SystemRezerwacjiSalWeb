@@ -16,8 +16,6 @@ export default function useAddReservation() {
         title: ""
     })
 
-    console.log("FormData", formData)
-
     const [uiState, setUiState] = useState<UiState>({
         loading: false,
         error: "",
