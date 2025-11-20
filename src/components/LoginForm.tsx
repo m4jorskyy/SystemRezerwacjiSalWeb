@@ -13,7 +13,7 @@ export default function LoginForm() {
     } = useLogin();
 
     return (
-        <div className={"flex flex-col justify-center items-center min-h-screen"}>
+        <div className={"flex flex-col justify-center items-center h-[80vh]"}>
             {uiState.loading ? (
                 <LoaderCircle className={"animate-spin"}/>
             ) : null}
@@ -22,23 +22,23 @@ export default function LoginForm() {
                     <Alert message={uiState.success === "" ? uiState.error : uiState.success} type={uiState.success === "" ? "error" : "success"}/>
                 </div>
             ) : null}
-            <form onSubmit={handleLogin} className={"flex flex-col justify-center items-center"}>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            <form onSubmit={handleLogin} className={"flex flex-col justify-center items-center card mb-10 mt-10"}>
+                <label htmlFor="email" className={"label-text"}>
                     Email
                 </label>
                 <input name={"email"} type={"email"} placeholder={"e.g. test@test.com"} value={formData.email} onChange={handleChange}
-                       required className={"text-center"}/>
+                       required className={"input-field"}/>
                 <br />
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="password" className={"label-text"}>
                     Password
                 </label>
                 <input name={"password"} type={"password"} placeholder={"********"} value={formData.password}
-                       onChange={handleChange} required className={"text-center"}/>
+                       onChange={handleChange} required className={"input-field"}/>
                 <br />
-                <input name={"submit"} type={"submit"} value={"Log In"} className={"cursor-pointer"} disabled={uiState.loading}/>
+                <input name={"submit"} type={"submit"} value={"Log In"} className={"btn-primary mb-2"} disabled={uiState.loading}/>
             </form>
 
-            <Link to={"/"}>Go back</Link>
+            <Link to={"/"} className={"btn-secondary"}>Go back</Link>
         </div>
     )
 }

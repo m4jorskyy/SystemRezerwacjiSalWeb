@@ -13,6 +13,7 @@ import EditRoomScreen from "./pages/EditRoomScreen";
 import EditReservationScreen from "./pages/EditReservationScreen";
 import ShowReservationScreen from "./pages/ShowReservationScreen";
 import ShowReservationHistoryScreen from "./pages/ShowReservationHistoryScreen";
+import GoogleCallbackScreen from "./pages/GoogleCallbackScreen";
 
 export default function App() {
 
@@ -46,6 +47,9 @@ export default function App() {
             }/>
             <Route path={"/reservations/history"} element={
                 <ShowReservationHistoryScreen />
+            } />
+            <Route path={"/callback"} element={
+                <GoogleCallbackScreen />
             } />
         </Routes>
     );

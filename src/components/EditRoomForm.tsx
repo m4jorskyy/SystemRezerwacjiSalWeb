@@ -1,7 +1,7 @@
-import {LoaderCircle} from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 import Alert from "./Alert";
 import useEditRoom from "../hooks/useEditRoom";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function EditRoomForm() {
     const {
@@ -10,53 +10,152 @@ export default function EditRoomForm() {
         handleEditRoom,
         handleChange,
         handleClose
-    } = useEditRoom()
+    } = useEditRoom();
 
     return (
-        <div className={"flex flex-col justify-center items-center min-h-screen"}>
-            {uiState.loading ? (
-                <LoaderCircle className={"animate-spin"}/>
-            ) : null}
+        <div className="flex flex-col justify-center items-center min-h-screen p-4">
 
-            {uiState.showAlert ? (
-                <div onClick={handleClose}>
-                    <Alert message={uiState.success === "" ? uiState.error : uiState.success}
-                           type={uiState.success === "" ? "error" : "success"}/>
+            {/* Loading Overlay */}
+            {uiState.loading ? (
+                <div className="fixed inset-0 bg-white/50 z-50 flex items-center justify-center">
+                    <LoaderCircle className="animate-spin text-primary w-10 h-10" />
                 </div>
             ) : null}
 
-            <form onSubmit={handleEditRoom} className={"flex flex-col justify-center items-center gap-2"}>
-                <label htmlFor="name">Room name:</label>
-                <input id="name" name={"name"} type={"text"} value={formData.name} onChange={handleChange} placeholder={"Room name"} required className={"text-center"} />
+            {/* Alert */}
+            {uiState.showAlert ? (
+                <div onClick={handleClose} className="w-full max-w-lg mb-4 cursor-pointer">
+                    <Alert
+                        message={uiState.success === "" ? uiState.error : uiState.success}
+                        type={uiState.success === "" ? "error" : "success"}
+                    />
+                </div>
+            ) : null}
 
-                <label htmlFor="building">Building name:</label>
-                <input id="building" name={"building"} type={"text"} value={formData.building} onChange={handleChange} placeholder={"Building name"} required className={"text-center"} />
+            <form onSubmit={handleEditRoom} className="card space-y-6 w-full max-w-lg">
 
-                <label htmlFor="capacity">Capacity:</label>
-                <input id="capacity" name={"capacity"} type={"number"} value={formData.capacity} min={2} onChange={handleChange} placeholder={"Capacity"} required className={"text-center"} />
+                <div className="border-b border-gray-200 pb-4 mb-4">
+                    <h2 className="heading-1">Edit Room Details</h2>
+                    <p className="text-sm text-gray-500 mt-1">Update information for this conference room.</p>
+                </div>
 
-                <label htmlFor="floor">Floor:</label>
-                <input id="floor" name={"floor"} type={"number"} value={formData.floor} onChange={handleChange} placeholder={"Floor"} required className={"text-center"} />
+                {/* Room Name */}
+                <div>
+                    <label htmlFor="name" className="label-text">Room Name</label>
+                    <input
+                        id="name"
+                        name="name"
+                        type="text"
+                        value={formData.name}
+                        onChange={handleChange}
+                        placeholder="e.g. Conference Hall A"
+                        required
+                        className="input-field"
+                    />
+                </div>
 
-                <label htmlFor="whiteboard">
-                    <input id="whiteboard" name={"whiteboard"} type={"checkbox"} checked={formData.whiteboard} onChange={handleChange} required className={"text-center"} />
-                    Whiteboard
-                </label>
+                {/* Building & Floor Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label htmlFor="building" className="label-text">Building Name</label>
+                        <input
+                            id="building"
+                            name="building"
+                            type="text"
+                            value={formData.building}
+                            onChange={handleChange}
+                            placeholder="e.g. Main Office"
+                            required
+                            className="input-field"
+                        />
+                    </div>
 
-                <label htmlFor="projector">
-                    <input id="projector" name={"projector"} type={"checkbox"} checked={formData.projector} onChange={handleChange} required className={"text-center"} />
-                    Projector
-                </label>
+                    <div>
+                        <label htmlFor="floor" className="label-text">Floor</label>
+                        <input
+                            id="floor"
+                            name="floor"
+                            type="number"
+                            value={formData.floor}
+                            onChange={handleChange}
+                            placeholder="e.g. 1"
+                            required
+                            className="input-field"
+                        />
+                    </div>
+                </div>
 
-                <label htmlFor="desks">
-                    <input id="desks" name={"desks"} type={"checkbox"} checked={formData.desks} onChange={handleChange} required className={"text-center"} />
-                    Desks
-                </label>
+                {/* Capacity */}
+                <div>
+                    <label htmlFor="capacity" className="label-text">Capacity</label>
+                    <input
+                        id="capacity"
+                        name="capacity"
+                        type="number"
+                        value={formData.capacity}
+                        min={2}
+                        onChange={handleChange}
+                        placeholder="e.g. 10"
+                        required
+                        className="input-field"
+                    />
+                </div>
 
-                <input type={"submit"} value={"Add room"}/>
+                {/* Equipment Section */}
+                <div>
+                    <span className="label-text mb-3 block">Available Equipment</span>
+                    <div className="flex flex-wrap gap-6 p-4 bg-background rounded-lg border border-gray-200">
+
+                        <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                                id="whiteboard"
+                                name="whiteboard"
+                                type="checkbox"
+                                checked={formData.whiteboard}
+                                onChange={handleChange}
+                                className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                            />
+                            <span className="text-sm text-gray-700">Whiteboard</span>
+                        </label>
+
+                        <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                                id="projector"
+                                name="projector"
+                                type="checkbox"
+                                checked={formData.projector}
+                                onChange={handleChange}
+                                className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                            />
+                            <span className="text-sm text-gray-700">Projector</span>
+                        </label>
+
+                        <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                                id="desks"
+                                name="desks"
+                                type="checkbox"
+                                checked={formData.desks}
+                                onChange={handleChange}
+                                className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                            />
+                            <span className="text-sm text-gray-700">Desks</span>
+                        </label>
+                    </div>
+                </div>
+
+                {/* Submit Button */}
+                <div className="pt-4">
+                    <input
+                        type="submit"
+                        value={uiState.loading ? "Saving..." : "Save Changes"}
+                        disabled={uiState.loading}
+                        className="btn-primary cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+                    />
+                </div>
             </form>
 
-            <Link to={"/menu"}>Go back</Link>
+            <Link to="/menu" className="btn-secondary w-fit mt-6 mb-8">Go back</Link>
         </div>
-    )
+    );
 }
