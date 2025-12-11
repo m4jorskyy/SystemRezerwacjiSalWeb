@@ -15,14 +15,12 @@ export default function RegisterForm() {
     return (
         <div className="flex flex-col justify-center items-center min-h-screen p-4">
 
-            {/* Loading Overlay */}
             {uiState.loading ? (
                 <div className="fixed inset-0 bg-white/50 z-50 flex items-center justify-center">
                     <LoaderCircle className="animate-spin text-primary w-10 h-10" />
                 </div>
             ) : null}
 
-            {/* Alert */}
             {uiState.showAlert ? (
                 <div onClick={handleClose} className="w-full max-w-md mb-4 cursor-pointer">
                     <Alert
@@ -39,7 +37,6 @@ export default function RegisterForm() {
                     <p className="text-sm text-gray-500 mt-1">Join us to start booking rooms.</p>
                 </div>
 
-                {/* First Name & Last Name Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label htmlFor="firstname" className="label-text">First Name</label>
@@ -70,7 +67,6 @@ export default function RegisterForm() {
                     </div>
                 </div>
 
-                {/* Email */}
                 <div>
                     <label htmlFor="email" className="label-text">Email Address</label>
                     <input
@@ -85,7 +81,6 @@ export default function RegisterForm() {
                     />
                 </div>
 
-                {/* Password */}
                 <div>
                     <label htmlFor="password" className="label-text">Password</label>
                     <input
@@ -100,7 +95,6 @@ export default function RegisterForm() {
                     />
                 </div>
 
-                {/* Submit Button */}
                 <div className="pt-2">
                     <input
                         name="submit"
@@ -111,7 +105,6 @@ export default function RegisterForm() {
                     />
                 </div>
 
-                {/* Login Link (Optional helper text) */}
                 <div className="text-center text-sm text-gray-500">
                     Already have an account? <Link to="/login" className="link">Log in</Link>
                 </div>

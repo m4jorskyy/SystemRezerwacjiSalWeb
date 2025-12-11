@@ -47,7 +47,6 @@ export default function AddRoomForm() {
                     />
                 </div>
 
-                {/* Building & Floor Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label htmlFor="building" className="label-text">Building Name</label>
@@ -78,7 +77,6 @@ export default function AddRoomForm() {
                     </div>
                 </div>
 
-                {/* Capacity */}
                 <div>
                     <label htmlFor="capacity" className="label-text">Capacity</label>
                     <input
@@ -94,7 +92,6 @@ export default function AddRoomForm() {
                     />
                 </div>
 
-                {/* Equipment Section */}
                 <div>
                     <span className="label-text mb-3 block">Available Equipment</span>
                     <div className="flex flex-wrap gap-6 p-4 bg-background rounded-lg border border-gray-200">

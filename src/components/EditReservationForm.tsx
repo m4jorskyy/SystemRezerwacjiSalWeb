@@ -56,14 +56,12 @@ export default function EditReservationForm() {
     return (
         <div className="flex flex-col justify-center items-center min-h-screen p-4 mt-4">
 
-            {/* Loading Overlay */}
             {uiState.loading ? (
                 <div className="fixed inset-0 bg-white/50 z-50 flex items-center justify-center">
                     <LoaderCircle className="animate-spin text-primary w-10 h-10" />
                 </div>
             ) : null}
 
-            {/* Alert */}
             {uiState.showAlert ? (
                 <div onClick={handleClose} className="w-full max-w-2xl mb-4 cursor-pointer">
                     <Alert
@@ -80,7 +78,6 @@ export default function EditReservationForm() {
                     <p className="text-sm text-gray-500 mt-1">Update details or change the room.</p>
                 </div>
 
-                {/* Title */}
                 <div>
                     <label htmlFor="title" className="label-text">Reservation Title</label>
                     <input
@@ -95,7 +92,6 @@ export default function EditReservationForm() {
                     />
                 </div>
 
-                {/* Dates Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label htmlFor="startTime" className="label-text">Meeting Start</label>
@@ -126,7 +122,6 @@ export default function EditReservationForm() {
                     </div>
                 </div>
 
-                {/* Capacity Filter */}
                 <div>
                     <label htmlFor="capacity" className="label-text">Minimum Capacity</label>
                     <input
@@ -141,7 +136,6 @@ export default function EditReservationForm() {
                     />
                 </div>
 
-                {/* Equipment Filters */}
                 <div>
                     <span className="label-text mb-3 block">Required Equipment</span>
                     <div className="flex flex-wrap gap-6 p-4 bg-background rounded-lg border border-gray-200">
@@ -183,7 +177,6 @@ export default function EditReservationForm() {
                     </div>
                 </div>
 
-                {/* Rooms List Section */}
                 <div className="pt-4">
                     <h3 className="label-text mb-2">Select a Room</h3>
 
@@ -213,7 +206,6 @@ export default function EditReservationForm() {
                     </div>
                 </div>
 
-                {/* Actions */}
                 <div className="pt-2">
                     <input
                         type="submit"

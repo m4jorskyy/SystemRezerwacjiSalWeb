@@ -29,18 +29,21 @@ export default function ShowRoomsScreen() {
         handleClose
     } = useDeleteRoom();
 
-    const handleEdit = (room: Room) => {
+    const triggerEdit = (room: Room) => {
         navigate(`/rooms/edit/${room.id}`);
+    };
+
+    const triggerDelete = (room: Room) => {
+        setRoomToDelete(room);
+        setShowConfirmation(true);
     };
 
     const handleDragEnd = (room: Room, offsetX: number) => {
         const threshold = 100;
-
         if (offsetX > threshold) {
-            handleEdit(room);
+            triggerEdit(room);
         } else if (offsetX < -threshold) {
-            setRoomToDelete(room);
-            setShowConfirmation(true);
+            triggerDelete(room);
         }
     };
 
@@ -85,24 +88,16 @@ export default function ShowRoomsScreen() {
                 {rooms?.map((room) => (
                     <div key={room.id} className="relative w-full group">
 
-                        {/* --- POPRAWIONE TŁO --- */}
-                        {/* Używamy flexa, żeby podzielić tło na dwie równe połówki */}
+                        {/* --- TŁO SWIPE --- */}
                         <div className="absolute inset-0 rounded-xl flex overflow-hidden">
-
-                            {/* Lewa połowa (Zielona) - widoczna przy ciągnięciu w PRAWO */}
-                            {/* justify-start pl-8: ikonka jest przyklejona do lewej krawędzi */}
                             <div className="bg-green-500 w-1/2 flex items-center justify-start pl-8">
                                 <Pencil className="text-white w-6 h-6" />
                             </div>
-
-                            {/* Prawa połowa (Czerwona) - widoczna przy ciągnięciu w LEWO */}
-                            {/* justify-end pr-8: ikonka jest przyklejona do prawej krawędzi */}
                             <div className="bg-red-500 w-1/2 flex items-center justify-end pr-8">
                                 <Trash2 className="text-white w-6 h-6" />
                             </div>
                         </div>
 
-                        {/* Karta na wierzchu */}
                         <motion.div
                             drag={!deleteRoomUiState.loading ? "x" : false}
                             dragConstraints={{ left: 0, right: 0 }}
@@ -111,10 +106,14 @@ export default function ShowRoomsScreen() {
                                 handleDragEnd(room, info.offset.x);
                             }}
                             whileDrag={{ scale: 1.02, cursor: "grabbing" }}
-                            // bg-surface jest kluczowe, żeby karta nie była przezroczysta!
                             className="relative cursor-grab active:cursor-grabbing bg-surface rounded-xl z-10"
                         >
-                            <RoomCard {...room} />
+                            <RoomCard
+                                {...room}
+                                // Przekazujemy funkcje do menu trzykropka
+                                onEdit={() => triggerEdit(room)}
+                                onDelete={() => triggerDelete(room)}
+                            />
                         </motion.div>
                     </div>
                 ))}

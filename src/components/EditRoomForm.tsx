@@ -15,14 +15,12 @@ export default function EditRoomForm() {
     return (
         <div className="flex flex-col justify-center items-center min-h-screen p-4">
 
-            {/* Loading Overlay */}
             {uiState.loading ? (
                 <div className="fixed inset-0 bg-white/50 z-50 flex items-center justify-center">
                     <LoaderCircle className="animate-spin text-primary w-10 h-10" />
                 </div>
             ) : null}
 
-            {/* Alert */}
             {uiState.showAlert ? (
                 <div onClick={handleClose} className="w-full max-w-lg mb-4 cursor-pointer">
                     <Alert
@@ -39,7 +37,6 @@ export default function EditRoomForm() {
                     <p className="text-sm text-gray-500 mt-1">Update information for this conference room.</p>
                 </div>
 
-                {/* Room Name */}
                 <div>
                     <label htmlFor="name" className="label-text">Room Name</label>
                     <input
@@ -54,7 +51,6 @@ export default function EditRoomForm() {
                     />
                 </div>
 
-                {/* Building & Floor Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label htmlFor="building" className="label-text">Building Name</label>
@@ -85,7 +81,6 @@ export default function EditRoomForm() {
                     </div>
                 </div>
 
-                {/* Capacity */}
                 <div>
                     <label htmlFor="capacity" className="label-text">Capacity</label>
                     <input
@@ -101,7 +96,6 @@ export default function EditRoomForm() {
                     />
                 </div>
 
-                {/* Equipment Section */}
                 <div>
                     <span className="label-text mb-3 block">Available Equipment</span>
                     <div className="flex flex-wrap gap-6 p-4 bg-background rounded-lg border border-gray-200">
@@ -144,7 +138,6 @@ export default function EditRoomForm() {
                     </div>
                 </div>
 
-                {/* Submit Button */}
                 <div className="pt-4">
                     <input
                         type="submit"
