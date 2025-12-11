@@ -6,8 +6,8 @@ export default function LoginScreen() {
             <div className="bg-white p-8 rounded-2xl shadow-xl max-w-sm w-full">
 
                 <div className="text-center mb-8">
-                    <h1 className={"heading-1"}>Zaloguj się</h1>
-                    <p className={"heading-2"}>Witaj z powrotem!</p>
+                    <h1 className={"heading-1"}>Log in</h1>
+                    <p className={"heading-2"}>Welcome back!</p>
                 </div>
 
                 <LoginForm />
