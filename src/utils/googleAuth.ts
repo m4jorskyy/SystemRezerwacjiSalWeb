@@ -10,7 +10,7 @@ export const getGoogleAuthUrl = (from = "/") => {
         response_type: "code",
         prompt: "consent",
         scope: [
-            "https://www.googleapis.com/auth/calendar.events.readonly",
+            "https://www.googleapis.com/auth/calendar.events",
             "openid",
             "email",
         ].join(" "),
