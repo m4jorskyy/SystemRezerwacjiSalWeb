@@ -14,6 +14,7 @@ import EditReservationScreen from "./pages/EditReservationScreen";
 import ShowReservationScreen from "./pages/ShowReservationScreen";
 import ShowReservationHistoryScreen from "./pages/ShowReservationHistoryScreen";
 import GoogleCallbackScreen from "./pages/GoogleCallbackScreen";
+import StatsScreen from "./pages/StatsScreen";
 
 export default function App() {
 
@@ -50,6 +51,12 @@ export default function App() {
             } />
             <Route path={"/callback"} element={
                 <GoogleCallbackScreen />
+            } />
+
+            <Route path={"/stats"} element={
+                <ProtectedRoute>
+                    <StatsScreen />
+                </ProtectedRoute>
             } />
         </Routes>
     );

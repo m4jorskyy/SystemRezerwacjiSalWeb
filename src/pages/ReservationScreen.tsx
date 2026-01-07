@@ -22,7 +22,7 @@ export default function ReservationScreen() {
                     Show My Reservations History
                 </Link>
                 <a href={getGoogleAuthUrl(location.pathname)} className={"btn-google"}>
-                    <button>Połącz z Kalendarzem Google</button>
+                    <button>Connect with Google Calendar</button>
                 </a>
             </div>
 
@@ -34,6 +34,9 @@ export default function ReservationScreen() {
                     </Link>
                     <Link to="/rooms/show" className={"btn-secondary"}>
                         Show All Rooms
+                    </Link>
+                    <Link to="/stats" className={"btn-secondary"}>
+                        Show Stats
                     </Link>
                 </div>
             ) : null}
