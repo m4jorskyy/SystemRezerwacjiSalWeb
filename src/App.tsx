@@ -15,6 +15,8 @@ import ShowReservationScreen from "./pages/ShowReservationScreen";
 import ShowReservationHistoryScreen from "./pages/ShowReservationHistoryScreen";
 import GoogleCallbackScreen from "./pages/GoogleCallbackScreen";
 import StatsScreen from "./pages/StatsScreen";
+import RoomDetails from "./pages/RoomDetails";
+import UserDetails from "./pages/UserDetails";
 
 export default function App() {
 
@@ -56,6 +58,18 @@ export default function App() {
             <Route path={"/stats"} element={
                 <ProtectedRoute>
                     <StatsScreen />
+                </ProtectedRoute>
+            } />
+
+            <Route path={"/stats/room/:id"} element={
+                <ProtectedRoute>
+                    <RoomDetails />
+                </ProtectedRoute>
+            } />
+
+            <Route path={"/stats/user/:id"} element={
+                <ProtectedRoute>
+                    <UserDetails />
                 </ProtectedRoute>
             } />
         </Routes>

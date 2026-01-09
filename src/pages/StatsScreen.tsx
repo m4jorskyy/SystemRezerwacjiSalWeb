@@ -1,297 +1,270 @@
-import { useState } from "react";
-import useStatistics from "../hooks/useStats";
-import {
-    LoaderCircle,
-    ChevronLeft,
-    ChevronRight,
-    Trophy,
-    Users,
-    Building,
-    Calendar,
-    BarChart3,
-    RefreshCw
-} from "lucide-react";
-import Alert from "../components/Alert";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+// Adjust imports based on your file structure
+import GlobalStats from "../types/GlobalStats";
+import RoomStats from "../types/RoomStats";
+import UserStats from "../types/UserStats";
+// Import your API functions
+import getAllRoomsStatsByWeek from "../api/stats/rooms/getAllRoomsStatsByWeek";
+import getAllUsersStatsByWeek from "../api/stats/users/getAllUsersStatsByWeek";
+import getGlobalStats from "../api/stats/globalStats";
 
-// --- LOADING STATE COMPONENT ---
-const LoadingState = () => (
-    <div className="flex flex-col justify-center items-center h-64 w-full">
-        <LoaderCircle className="animate-spin text-primary w-10 h-10 mb-4" />
-        <p className="text-gray-400 text-sm font-medium animate-pulse">Analyzing data...</p>
-    </div>
-);
 
 export default function StatsScreen() {
-    const {
-        currentDate,
-        nextWeek,
-        prevWeek,
-        globalQuery,
-        roomsQuery,
-        usersQuery
-    } = useStatistics();
+    const navigate = useNavigate();
 
-    const [activeTab, setActiveTab] = useState<"overview" | "rooms" | "users">("overview");
+    // State management
+    const [weekStart, setWeekStart] = useState<string>(getCurrentWeekStart());
+    const [globalStats, setGlobalStats] = useState<GlobalStats | null>(null);
+    const [roomStats, setRoomStats] = useState<RoomStats[]>([]);
+    const [userStats, setUserStats] = useState<UserStats[]>([]);
 
-    // Helper to extract error message
-    const getErrorMessage = (error: any) => {
-        if (error?.response?.data?.message) return error.response.data.message;
-        if (error?.message) return error.message;
-        return "Unknown server error";
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null); // Added Error state
+
+    const [activeTab, setActiveTab] = useState<'overview' | 'rooms' | 'users'>('overview');
+
+    // Helper to get current Monday
+    function getCurrentWeekStart(): string {
+        const d = new Date();
+        const day = d.getDay();
+        const diff = d.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is sunday
+        const monday = new Date(d.setDate(diff));
+        return monday.toISOString().split('T')[0];
+    }
+
+    // Navigation handlers
+    const handlePrevWeek = () => {
+        const date = new Date(weekStart);
+        date.setDate(date.getDate() - 7);
+        setWeekStart(date.toISOString().split('T')[0]);
     };
 
-    // Calculate end date (Sunday)
-    const endDate = new Date(currentDate);
-    endDate.setDate(endDate.getDate() + 6);
+    const handleNextWeek = () => {
+        const date = new Date(weekStart);
+        date.setDate(date.getDate() + 7);
+        setWeekStart(date.toISOString().split('T')[0]);
+    };
 
-    // Format date for English display (e.g., Jan 10 - Jan 16)
-    const displayDateRange = `${currentDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short' })} - ${endDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short' })}`;
+    // Data fetching
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            setError(null); // Clear previous errors
 
-    // Helper to render Error with your Alert component + Retry Button
-    const renderError = (error: any, refetch: () => void) => (
-        <div className="flex flex-col items-center justify-center w-full py-8 animate-in fade-in">
-            <div className="w-full max-w-md">
-                <Alert type="error" message={getErrorMessage(error)} />
+            // 1. CLEAR OLD DATA to avoid showing stale data from previous week
+            setGlobalStats(null);
+            setRoomStats([]);
+            setUserStats([]);
+
+            try {
+                // Fetch all data in parallel
+                const [global, rooms, users] = await Promise.all([
+                    getGlobalStats(weekStart),
+                    getAllRoomsStatsByWeek(weekStart),
+                    getAllUsersStatsByWeek(weekStart)
+                ]);
+
+                setGlobalStats(global);
+                setRoomStats(rooms);
+                setUserStats(users);
+            } catch (error) {
+                console.error("Error fetching stats:", error);
+                setError("Failed to load statistics for this week.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [weekStart]);
+
+    // Common Header Component (to avoid duplication)
+    const HeaderControls = () => (
+        <div className="flex justify-between items-center mb-8">
+            <button onClick={handlePrevWeek} className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
+                &larr; Prev Week
+            </button>
+            <div className="text-center">
+                <h1 className="text-3xl font-bold">Statistics</h1>
+                <p className="text-gray-500 mt-1">Week of: {weekStart}</p>
             </div>
-            <button
-                onClick={() => refetch()}
-                className="mt-4 flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 hover:text-primary hover:border-primary transition-all font-medium text-sm shadow-sm"
-            >
-                <RefreshCw className="w-4 h-4" /> Try Again
+            <button onClick={handleNextWeek} className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
+                Next Week &rarr;
             </button>
         </div>
     );
 
-    // Content Rendering Logic
-    const renderContent = () => {
-        switch (activeTab) {
-            case "overview":
-                if (globalQuery.isLoading) return <LoadingState />;
-                if (globalQuery.isError) return renderError(globalQuery.error, globalQuery.refetch);
-                if (!globalQuery.data) return null;
+    // Render Logic
 
-                return (
-                    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                        {/* KPI Cards */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                                    <Calendar className="w-24 h-24 text-indigo-500" />
-                                </div>
-                                <span className="text-5xl font-extrabold text-primary mb-1">
-                                    {globalQuery.data.totalReservations}
-                                </span>
-                                <span className="text-gray-500 font-medium text-sm uppercase tracking-wide">Reservations</span>
-                            </div>
+    if (loading) {
+        return <div className="p-10 text-center text-xl">Loading stats...</div>;
+    }
 
-                            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                                    <Trophy className="w-24 h-24 text-emerald-500" />
-                                </div>
-                                <span className="text-5xl font-extrabold text-emerald-600 mb-1">
-                                    {globalQuery.data.totalHours.toFixed(1)} h
-                                </span>
-                                <span className="text-gray-500 font-medium text-sm uppercase tracking-wide">Total Hours</span>
-                            </div>
-                        </div>
-
-                        {/* Highlights */}
-                        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                            <h3 className="text-lg font-bold mb-6 flex items-center gap-2 text-gray-800">
-                                <Trophy className="text-yellow-500 w-5 h-5" /> Weekly Highlights
-                            </h3>
-                            <div className="space-y-4">
-                                <div className="flex items-center p-4 bg-gray-50 rounded-xl border border-gray-100 transition hover:bg-gray-50">
-                                    <div className="p-3 bg-white rounded-full shadow-sm mr-4 border border-gray-100">
-                                        <Building className="w-6 h-6 text-indigo-500" />
-                                    </div>
-                                    <div>
-                                        <p className="text-sm text-gray-500 font-medium">Most Popular Room</p>
-                                        <p className="text-xl font-bold text-gray-800">
-                                            {globalQuery.data.topRoomId ? `Room #${globalQuery.data.topRoomId}` : "No data"}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-center p-4 bg-gray-50 rounded-xl border border-gray-100 transition hover:bg-gray-50">
-                                    <div className="p-3 bg-white rounded-full shadow-sm mr-4 border border-gray-100">
-                                        <Users className="w-6 h-6 text-emerald-500" />
-                                    </div>
-                                    <div>
-                                        <p className="text-sm text-gray-500 font-medium">Most Active User</p>
-                                        <p className="text-xl font-bold text-gray-800">
-                                            {globalQuery.data.topUserId ? `User #${globalQuery.data.topUserId}` : "No data"}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                );
-
-            case "rooms":
-                if (roomsQuery.isLoading) return <LoadingState />;
-                if (roomsQuery.isError) return renderError(roomsQuery.error, roomsQuery.refetch);
-                if (!roomsQuery.data) return null;
-
-                return (
-                    <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                        <h3 className="text-lg font-bold flex items-center gap-2 text-gray-800">
-                            <Building className="text-primary w-5 h-5" /> Room Rankings
-                        </h3>
-
-                        {roomsQuery.data.length === 0 ? (
-                            <div className="text-center py-12">
-                                <Building className="w-12 h-12 text-gray-200 mx-auto mb-3" />
-                                <p className="text-gray-500 font-medium">No room data for this week.</p>
-                            </div>
-                        ) : (
-                            <div className="space-y-6">
-                                {roomsQuery.data
-                                    .sort((a, b) => b.totalHours - a.totalHours)
-                                    .map((room) => (
-                                        <div key={room.id} className="space-y-2 group">
-                                            <div className="flex justify-between items-end">
-                                                <div className="flex flex-col">
-                                                    <span className="font-bold text-gray-800 text-lg group-hover:text-primary transition-colors">Room #{room.roomId}</span>
-                                                    <span className="text-xs text-gray-500 font-medium uppercase tracking-wider">
-                                                    {room.reservationsCount} reservations
-                                                </span>
-                                                </div>
-                                                <div className="text-right">
-                                                <span className="font-bold text-gray-800 text-xl block">
-                                                    {room.totalHours.toFixed(1)}h
-                                                </span>
-                                                    <span className="text-xs text-gray-400">
-                                                    avg. {room.avgHours.toFixed(1)}h
-                                                </span>
-                                                </div>
-                                            </div>
-
-                                            <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
-                                                <div
-                                                    className="bg-indigo-500 h-3 rounded-full transition-all duration-1000 ease-out relative overflow-hidden"
-                                                    style={{ width: `${Math.min((room.totalHours / 50) * 100, 100)}%` }}
-                                                >
-                                                    <div className="absolute inset-0 bg-white/20 w-full h-full animate-[shimmer_2s_infinite]"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                            </div>
-                        )}
-                    </div>
-                );
-
-            case "users":
-                if (usersQuery.isLoading) return <LoadingState />;
-                if (usersQuery.isError) return renderError(usersQuery.error, usersQuery.refetch);
-                if (!usersQuery.data) return null;
-
-                return (
-                    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-500">
-                        <div className="p-6 border-b border-gray-100">
-                            <h3 className="text-lg font-bold flex items-center gap-2 text-gray-800">
-                                <Users className="text-primary w-5 h-5" /> User Activity
-                            </h3>
-                        </div>
-
-                        {usersQuery.data.length === 0 ? (
-                            <div className="text-center py-12">
-                                <Users className="w-12 h-12 text-gray-200 mx-auto mb-3" />
-                                <p className="text-gray-500 font-medium">No user activity recorded.</p>
-                            </div>
-                        ) : (
-                            <div className="overflow-x-auto">
-                                <table className="w-full text-left text-sm text-gray-600">
-                                    <thead className="bg-gray-50 text-xs uppercase font-semibold text-gray-500">
-                                    <tr>
-                                        <th className="px-6 py-4">User</th>
-                                        <th className="px-6 py-4 text-center">Reservations</th>
-                                        <th className="px-6 py-4 text-center">Total Hours</th>
-                                        <th className="px-6 py-4 text-right">Avg. Duration</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-gray-100">
-                                    {usersQuery.data
-                                        .sort((a, b) => b.totalHours - a.totalHours)
-                                        .map((user) => (
-                                            <tr key={user.id} className="hover:bg-gray-50 transition group cursor-default">
-                                                <td className="px-6 py-4 font-bold text-gray-800 group-hover:text-primary transition-colors">
-                                                    #{user.userId}
-                                                </td>
-                                                <td className="px-6 py-4 text-center">
-                                                    <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-100">
-                                                        {user.reservationsCount}
-                                                    </span>
-                                                </td>
-                                                <td className="px-6 py-4 text-center font-bold text-emerald-600">
-                                                    {user.totalHours.toFixed(1)} h
-                                                </td>
-                                                <td className="px-6 py-4 text-right text-gray-500">
-                                                    {user.avgHours.toFixed(1)} h
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        )}
-                    </div>
-                );
-        }
-    };
+    if (error) {
+        return (
+            <div className="container mx-auto p-6">
+                <HeaderControls />
+                <div className="p-10 bg-red-50 text-red-600 rounded-lg border border-red-200 text-center">
+                    <h3 className="text-lg font-bold">Error</h3>
+                    <p>{error}</p>
+                    <button
+                        onClick={() => window.location.reload()}
+                        className="mt-4 px-4 py-2 bg-white border border-red-200 rounded hover:bg-red-50"
+                    >
+                        Try Refreshing
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <div className="flex flex-col items-center min-h-screen p-4 bg-gray-50/50">
+        <div className="container mx-auto p-6">
+            <HeaderControls />
 
-            {/* --- HEADER --- */}
-            <div className="w-full max-w-4xl mb-8 flex flex-col md:flex-row justify-between items-center gap-4 mt-6">
-                <div>
-                    <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-2">
-                        <BarChart3 className="text-primary w-8 h-8" /> Statistics
-                    </h1>
-                    <p className="text-gray-500 text-sm">Analyze resource usage and activity.</p>
-                </div>
+            {/* Tabs */}
+            <div className="flex border-b border-gray-300 mb-6">
+                <button
+                    className={`px-6 py-3 font-medium ${activeTab === 'overview' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'}`}
+                    onClick={() => setActiveTab('overview')}
+                >
+                    Overview
+                </button>
+                <button
+                    className={`px-6 py-3 font-medium ${activeTab === 'rooms' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'}`}
+                    onClick={() => setActiveTab('rooms')}
+                >
+                    Rooms
+                </button>
+                <button
+                    className={`px-6 py-3 font-medium ${activeTab === 'users' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'}`}
+                    onClick={() => setActiveTab('users')}
+                >
+                    Users
+                </button>
+            </div>
 
-                <div className="flex items-center gap-4 bg-white p-1.5 rounded-xl shadow-sm border border-gray-200">
-                    <button onClick={prevWeek} className="p-2 hover:bg-gray-100 rounded-lg transition text-gray-600 active:scale-95">
-                        <ChevronLeft className="w-5 h-5" />
-                    </button>
-                    <div className="flex items-center gap-2 px-2 font-semibold text-gray-700  justify-center select-none">
-                        <Calendar className="w-4 h-4 text-primary" />
-                        <span>{displayDateRange}</span>
+            {/* Content Area */}
+            <div className="bg-white rounded-lg shadow p-6">
+
+                {/* --- OVERVIEW TAB --- */}
+                {activeTab === 'overview' && (
+                    globalStats ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="p-6 bg-blue-50 rounded-lg text-center">
+                                <h3 className="text-lg text-gray-600">Total Reservations</h3>
+                                <p className="text-4xl font-bold text-blue-600 mt-2">{globalStats.totalReservations}</p>
+                            </div>
+                            <div className="p-6 bg-green-50 rounded-lg text-center">
+                                <h3 className="text-lg text-gray-600">Total Hours</h3>
+                                <p className="text-4xl font-bold text-green-600 mt-2">{globalStats.totalHours.toFixed(1)} h</p>
+                            </div>
+                            <div className="p-6 bg-gray-50 rounded-lg">
+                                <h3 className="text-gray-600 mb-1">Top Room</h3>
+                                <p className="text-xl font-bold">
+                                    {globalStats.topRoomId ? `Room #${globalStats.topRoomId}` : "No data"}
+                                </p>
+                            </div>
+                            <div className="p-6 bg-gray-50 rounded-lg">
+                                <h3 className="text-gray-600 mb-1">Top User</h3>
+                                <p className="text-xl font-bold">
+                                    {globalStats.topUserId ? `User #${globalStats.topUserId}` : "No data"}
+                                </p>
+                            </div>
+                        </div>
+                    ) : (
+                        // 2. EMPTY STATE FOR OVERVIEW
+                        <div className="text-center py-10 text-gray-500">
+                            <p className="text-xl">No overview data available for this week.</p>
+                        </div>
+                    )
+                )}
+
+                {/* --- ROOMS TAB --- */}
+                {activeTab === 'rooms' && (
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full text-left">
+                            <thead className="bg-gray-100 border-b">
+                            <tr>
+                                <th className="px-6 py-3">Room ID</th>
+                                <th className="px-6 py-3 text-center">Reservations</th>
+                                <th className="px-6 py-3 text-right">Total Hours</th>
+                                <th className="px-6 py-3 text-right">Avg Duration</th>
+                            </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-200">
+                            {roomStats.map((room) => (
+                                <tr
+                                    key={room.roomId}
+                                    onClick={() => navigate(`/stats/room/${room.roomId}`)}
+                                    className="hover:bg-blue-50 cursor-pointer transition-colors duration-150"
+                                    title="Click to view history"
+                                >
+                                    <td className="px-6 py-4 font-medium">Room #{room.roomId}</td>
+                                    <td className="px-6 py-4 text-center">
+                                            <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-bold">
+                                                {room.reservationsCount}
+                                            </span>
+                                    </td>
+                                    <td className="px-6 py-4 text-right font-bold text-gray-700">
+                                        {room.totalHours.toFixed(1)} h
+                                    </td>
+                                    <td className="px-6 py-4 text-right text-gray-500">
+                                        {room.avgHours.toFixed(1)} h
+                                    </td>
+                                </tr>
+                            ))}
+                            {roomStats.length === 0 && (
+                                <tr><td colSpan={4} className="text-center py-6 text-gray-500">No room data available.</td></tr>
+                            )}
+                            </tbody>
+                        </table>
                     </div>
-                    <button onClick={nextWeek} className="p-2 hover:bg-gray-100 rounded-lg transition text-gray-600 active:scale-95">
-                        <ChevronRight className="w-5 h-5" />
-                    </button>
-                </div>
-            </div>
+                )}
 
-            {/* --- TABS --- */}
-            <div className="flex p-1 bg-white rounded-xl border border-gray-200 mb-6 w-full max-w-4xl shadow-sm">
-                {(["overview", "rooms", "users"] as const).map(tab => (
-                    <button
-                        key={tab}
-                        onClick={() => setActiveTab(tab)}
-                        className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-semibold transition-all duration-200 capitalize ${
-                            activeTab === tab
-                                ? "bg-primary text-white shadow-md transform scale-[1.02]"
-                                : "text-gray-500 hover:bg-gray-50 hover:text-gray-700"
-                        }`}
-                    >
-                        {tab}
-                    </button>
-                ))}
+                {/* --- USERS TAB --- */}
+                {activeTab === 'users' && (
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full text-left">
+                            <thead className="bg-gray-100 border-b">
+                            <tr>
+                                <th className="px-6 py-3">User ID</th>
+                                <th className="px-6 py-3 text-center">Reservations</th>
+                                <th className="px-6 py-3 text-right">Total Hours</th>
+                                <th className="px-6 py-3 text-right">Avg Duration</th>
+                            </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-200">
+                            {userStats.map((user) => (
+                                <tr
+                                    key={user.userId}
+                                    onClick={() => navigate(`/stats/user/${user.userId}`)}
+                                    className="hover:bg-green-50 cursor-pointer transition-colors duration-150"
+                                    title="Click to view history"
+                                >
+                                    <td className="px-6 py-4 font-medium">User #{user.userId}</td>
+                                    <td className="px-6 py-4 text-center">
+                                            <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold">
+                                                {user.reservationsCount}
+                                            </span>
+                                    </td>
+                                    <td className="px-6 py-4 text-right font-bold text-gray-700">
+                                        {user.totalHours.toFixed(1)} h
+                                    </td>
+                                    <td className="px-6 py-4 text-right text-gray-500">
+                                        {user.avgHours.toFixed(1)} h
+                                    </td>
+                                </tr>
+                            ))}
+                            {userStats.length === 0 && (
+                                <tr><td colSpan={4} className="text-center py-6 text-gray-500">No user data available.</td></tr>
+                            )}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </div>
-
-            {/* --- MAIN CONTENT CONTAINER --- */}
-            <div className="w-full max-w-4xl min-h-[400px]">
-                {renderContent()}
-            </div>
-
-            <Link to="/menu" className="btn-secondary w-fit mt-10">Back to Menu</Link>
         </div>
     );
 }
