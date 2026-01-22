@@ -3,7 +3,6 @@ import {useNavigate} from "react-router-dom";
 import {UiState} from "../types/UiState";
 import RegisterRequest from "../types/RegisterRequest";
 import axios from "axios";
-import RegisterResponse from "../types/RegisterResponse";
 import postRegister from "../api/auth/register";
 
 export default function useRegister() {
@@ -31,8 +30,7 @@ export default function useRegister() {
         }))
 
         try {
-            const data: RegisterResponse = await postRegister(formData)
-            //TODO: username, role storing
+            await postRegister(formData)
             setUiState({
                 loading: false,
                 success: "Register successful!",

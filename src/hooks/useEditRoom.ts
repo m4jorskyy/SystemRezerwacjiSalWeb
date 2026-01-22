@@ -1,7 +1,6 @@
 import {useEffect, useState} from "react";
 import {UiState} from "../types/UiState";
 import {useNavigate, useParams} from "react-router-dom";
-import AddRoomResponse from "../types/AddRoomResponse";
 import axios from "axios";
 import AddRoomRequest from "../types/AddRoomRequest";
 import editRoom from "../api/rooms/editRoom";
@@ -42,7 +41,7 @@ export default function useEditRoom(){
 
         try {
             if(!numericRoomId) return
-            const response: AddRoomResponse = await editRoom(numericRoomId, formData)
+            await editRoom(numericRoomId, formData)
 
             setUiState({
                 loading: false,

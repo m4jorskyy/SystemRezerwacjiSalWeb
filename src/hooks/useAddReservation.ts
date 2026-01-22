@@ -5,7 +5,6 @@ import {useNavigate} from "react-router-dom";
 import {useAuth} from "../context/AuthContext";
 import axios from "axios";
 import addReservation from "../api/reservations/addReservation";
-import {AddReservationResponse} from "../types/AddReservationResponse";
 
 export default function useAddReservation() {
     const [formData, setFormData] = useState<AddReservationRequest>({
@@ -37,7 +36,7 @@ export default function useAddReservation() {
 
         try {
             const request: AddReservationRequest = {...formData, userId: user?.id}
-            const response: AddReservationResponse = await addReservation(request)
+            await addReservation(request)
 
             setUiState({
                 loading: false,

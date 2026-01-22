@@ -3,7 +3,6 @@ import {AddReservationRequest} from "../types/AddReservationRequest";
 import {UiState} from "../types/UiState";
 import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
-import {AddReservationResponse} from "../types/AddReservationResponse";
 import editReservation from "../api/reservations/editReservation";
 import {useAuth} from "../context/AuthContext";
 
@@ -41,7 +40,7 @@ export default function useEditReservation() {
 
         try {
             const request: AddReservationRequest = {...formData, userId: user?.id}
-            const response: AddReservationResponse = await editReservation(numericReservationId, request)
+            await editReservation(numericReservationId, request)
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 const errorMessage: string = error.response?.data?.message || "Editing reservation failed. Try again."

@@ -3,7 +3,6 @@ import AddRoomRequest from "../types/AddRoomRequest";
 import {UiState} from "../types/UiState";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
-import AddRoomResponse from "../types/AddRoomResponse";
 import addRoom from "../api/rooms/addRoom";
 
 export default function useAddRoom() {
@@ -35,7 +34,7 @@ export default function useAddRoom() {
         }))
 
         try {
-            const response: AddRoomResponse = await addRoom(formData)
+            await addRoom(formData)
 
             setUiState({
                 loading: false,
