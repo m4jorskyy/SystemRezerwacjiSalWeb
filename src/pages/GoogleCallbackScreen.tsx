@@ -36,7 +36,7 @@ export default function GoogleCallbackScreen() {
 
             handleGoogleAuth();
         }
-    }, [searchParams, navigate]);
+    }, [searchParams, user, navigate]);
 
     return <div>Trwa łączenie z kalendarzem...</div>;
 }
