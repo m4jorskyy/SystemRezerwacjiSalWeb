@@ -22,7 +22,6 @@ export default function ShowReservationHistoryScreen() {
         }
     );
 
-    // Sortujemy, żeby najnowsze z przeszłych były na górze
     const sortedPastReservations = pastReservations?.sort((a, b) =>
         new Date(b.endTime).getTime() - new Date(a.endTime).getTime()
     );
@@ -30,7 +29,6 @@ export default function ShowReservationHistoryScreen() {
     return (
         <div className="flex flex-col justify-center items-center min-h-screen p-4">
 
-            {/* --- NAGŁÓWEK --- */}
             <div className="text-center mb-8">
                 <div className="inline-flex items-center justify-center p-3 bg-indigo-50 rounded-full mb-4 shadow-sm">
                     <History className="w-8 h-8 text-primary" />
@@ -39,24 +37,20 @@ export default function ShowReservationHistoryScreen() {
                 <p className="text-gray-500 mt-2 text-sm">Review your past meetings and events.</p>
             </div>
 
-            {/* --- LOADING --- */}
             {isLoading ? (
                 <div className="fixed inset-0 bg-white/50 z-50 flex items-center justify-center">
                     <LoaderCircle className="animate-spin text-primary w-10 h-10" />
                 </div>
             ) : null}
 
-            {/* --- ERROR --- */}
             {isError ? (
                 <div className="w-full max-w-2xl mb-4">
                     <Alert message={error.toString()} type="error" />
                 </div>
             ) : null}
 
-            {/* --- LISTA --- */}
             <div className="w-full max-w-2xl space-y-4">
 
-                {/* Empty State (Brak historii) */}
                 {!isLoading && sortedPastReservations?.length === 0 && (
                     <div className="text-center py-12 bg-white rounded-xl border border-dashed border-gray-300">
                         <CalendarX className="w-12 h-12 text-gray-300 mx-auto mb-3" />
@@ -64,7 +58,6 @@ export default function ShowReservationHistoryScreen() {
                     </div>
                 )}
 
-                {/* Karty Rezerwacji */}
                 {sortedPastReservations?.map(reservation => (
                     <ReservationCard key={reservation.id} {...reservation} />
                 ))}

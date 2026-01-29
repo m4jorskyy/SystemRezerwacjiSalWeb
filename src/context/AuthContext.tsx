@@ -8,7 +8,6 @@ interface AuthContextType {
     isLoading: boolean
     setUser: (user: LoginResponse | null) => void
     logout: () => void
-    refetchUser: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -32,12 +31,6 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
         navigate("/")
     };
 
-    const refetchUser = async () => {
-        // once you have /me endpoint, you’ll re-enable this
-        console.warn("Refetch user not implemented yet");
-    };
-
-    // whenever user changes, persist in localStorage
     useEffect(() => {
         if (user) {
             localStorage.setItem("token", user.token);
@@ -46,7 +39,7 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
     }, [user]);
 
     return (
-        <AuthContext.Provider value={{ user, isLoading, setUser, logout, refetchUser }}>
+        <AuthContext.Provider value={{ user, isLoading, setUser, logout }}>
             {children}
         </AuthContext.Provider>
     );

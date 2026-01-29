@@ -4,7 +4,7 @@ module.exports = {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
-  darkMode: "media", // automatycznie według systemu
+  darkMode: "media",
   theme: {
     extend: {
       colors: {

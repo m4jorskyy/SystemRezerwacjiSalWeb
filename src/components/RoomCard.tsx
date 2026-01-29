@@ -5,7 +5,6 @@ import { useState } from "react";
 interface RoomCardProps extends Room {
     onClick?: () => void;
     isSelected?: boolean;
-    // Nowe, opcjonalne funkcje
     onEdit?: () => void;
     onDelete?: () => void;
 }
@@ -26,7 +25,6 @@ export default function RoomCard({
                                  }: RoomCardProps) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    // Sprawdzamy, czy karta ma być edytowalna
     const isEditable = onEdit && onDelete;
 
     return (
@@ -41,7 +39,6 @@ export default function RoomCard({
             }
             `}
         >
-            {/* --- MENU TRZYKROPKA --- */}
             {isEditable && (
                 <div className="absolute top-3 right-3 z-20">
                     <button
@@ -88,7 +85,6 @@ export default function RoomCard({
                 </div>
             )}
 
-            {/* --- TREŚĆ KARTY --- */}
             <div>
                 <div className="flex items-center gap-3 mb-1">
                     <h3 className="text-lg font-bold text-primary">{name}</h3>

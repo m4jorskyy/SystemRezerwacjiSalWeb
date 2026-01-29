@@ -18,7 +18,6 @@ export default function ShowReservationScreen() {
         error
     } = useShowReservations()
 
-    // Filtrujemy, żeby pokazać tylko aktualne i przyszłe rezerwacje
     const now = Date.now()
     const upcomingOngoingReservations = reservations?.filter(reservation => {
         const endTimeMs = new Date(reservation.endTime).getTime()
@@ -37,22 +36,17 @@ export default function ShowReservationScreen() {
         handleClose
     } = useDeleteReservation()
 
-    // --- FUNKCJE POMOCNICZE (HANDLERS) ---
-
-    // 1. Edycja
     const triggerEdit = (reservation: Reservation) => {
         navigate(`/reservations/edit/${reservation.id}`)
     }
 
-    // 2. Usuwanie (Otwiera modal)
     const triggerDelete = (reservation: Reservation) => {
         setReservationToDelete(reservation)
         setShowConfirmation(true)
     }
 
-    // 3. Obsługa gestu przeciągnięcia
     const handleDragEnd = (reservation: Reservation, offsetX: number) => {
-        const threshold = 100 // Jak daleko trzeba przesunąć
+        const threshold = 100
         if (offsetX > threshold) {
             triggerEdit(reservation)
         } else if (offsetX < -threshold) {
@@ -63,7 +57,6 @@ export default function ShowReservationScreen() {
     return (
         <div className="flex flex-col justify-center items-center min-h-screen p-4">
 
-            {/* --- LOADING & ALERTS --- */}
             {isLoading || deleteReservationUiState.loading ? (
                 <div className="fixed inset-0 bg-white/50 z-50 flex items-center justify-center">
                     <LoaderCircle className="animate-spin text-primary w-10 h-10"/>
@@ -82,7 +75,6 @@ export default function ShowReservationScreen() {
                 </div>
             ) : null}
 
-            {/* --- CONFIRMATION MODAL --- */}
             {showConfirmation && reservationToDelete && (
                 <ConfirmationCard
                     message={`Are you sure you want to delete reservation "${reservationToDelete.title}"?`}
@@ -99,29 +91,23 @@ export default function ShowReservationScreen() {
                 />
             )}
 
-            {/* --- LISTA REZERWACJI --- */}
             <div className="w-full max-w-2xl space-y-4">
                 {upcomingOngoingReservations?.length === 0 && !isLoading && (
                     <p className="text-center text-gray-500 mt-10">No upcoming reservations found.</p>
                 )}
 
                 {upcomingOngoingReservations?.map(reservation => (
-                    // WRAPPER RELATIVE (Dla tła pod spodem)
                     <div key={reservation.id} className="relative w-full group">
 
-                        {/* WARSTWA TŁA (Widoczna przy przesuwaniu) */}
                         <div className="absolute inset-0 rounded-xl flex overflow-hidden">
-                            {/* Lewa (Zielona - Edycja) */}
                             <div className="bg-green-500 w-1/2 flex items-center justify-start pl-8">
                                 <Pencil className="text-white w-6 h-6" />
                             </div>
-                            {/* Prawa (Czerwona - Usuwanie) */}
                             <div className="bg-red-500 w-1/2 flex items-center justify-end pr-8">
                                 <Trash2 className="text-white w-6 h-6" />
                             </div>
                         </div>
 
-                        {/* WARSTWA WIERZCHNIA (KARTA) - Przesuwalna */}
                         <motion.div
                             drag={!deleteReservationUiState.loading ? "x" : false}
                             onDragEnd={(_, info) => {
@@ -130,12 +116,10 @@ export default function ShowReservationScreen() {
                             dragConstraints={{left: 0, right: 0}} // Sprężynuje z powrotem
                             dragElastic={0.6}
                             whileDrag={{scale: 1.02, cursor: "grabbing"}}
-                            // bg-surface jest KONIECZNE, żeby zakryć tło
                             className="cursor-grab active:cursor-grabbing w-full bg-surface rounded-xl relative z-10"
                         >
                             <ReservationCard
                                 {...reservation}
-                                // Tutaj przekazujemy funkcje do obsługi MENU (trzykropka)
                                 onEdit={() => triggerEdit(reservation)}
                                 onDelete={() => triggerDelete(reservation)}
                             />

@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-// Adjust imports based on your file structure
 import GlobalStats from "../types/GlobalStats";
 import RoomStats from "../types/RoomStats";
 import UserStats from "../types/UserStats";
-// Import your API functions
 import getAllRoomsStatsByWeek from "../api/stats/rooms/getAllRoomsStatsByWeek";
 import getAllUsersStatsByWeek from "../api/stats/users/getAllUsersStatsByWeek";
 import getGlobalStats from "../api/stats/globalStats";
@@ -13,7 +11,6 @@ import getGlobalStats from "../api/stats/globalStats";
 export default function StatsScreen() {
     const navigate = useNavigate();
 
-    // State management
     const [weekStart, setWeekStart] = useState<string>(getCurrentWeekStart());
     const [globalStats, setGlobalStats] = useState<GlobalStats | null>(null);
     const [roomStats, setRoomStats] = useState<RoomStats[]>([]);
@@ -24,7 +21,6 @@ export default function StatsScreen() {
 
     const [activeTab, setActiveTab] = useState<'overview' | 'rooms' | 'users'>('overview');
 
-    // Helper to get current Monday
     function getCurrentWeekStart(): string {
         const d = new Date();
         const day = d.getDay();
@@ -33,7 +29,6 @@ export default function StatsScreen() {
         return monday.toISOString().split('T')[0];
     }
 
-    // Navigation handlers
     const handlePrevWeek = () => {
         const date = new Date(weekStart);
         date.setDate(date.getDate() - 7);
@@ -46,19 +41,16 @@ export default function StatsScreen() {
         setWeekStart(date.toISOString().split('T')[0]);
     };
 
-    // Data fetching
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             setError(null); // Clear previous errors
 
-            // 1. CLEAR OLD DATA to avoid showing stale data from previous week
             setGlobalStats(null);
             setRoomStats([]);
             setUserStats([]);
 
             try {
-                // Fetch all data in parallel
                 const [global, rooms, users] = await Promise.all([
                     getGlobalStats(weekStart),
                     getAllRoomsStatsByWeek(weekStart),
@@ -79,7 +71,6 @@ export default function StatsScreen() {
         fetchData();
     }, [weekStart]);
 
-    // Common Header Component (to avoid duplication)
     const HeaderControls = () => (
         <div className="flex justify-between items-center mb-8">
             <button onClick={handlePrevWeek} className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
@@ -94,8 +85,6 @@ export default function StatsScreen() {
             </button>
         </div>
     );
-
-    // Render Logic
 
     if (loading) {
         return <div className="p-10 text-center text-xl">Loading stats...</div>;
@@ -145,10 +134,8 @@ export default function StatsScreen() {
                 </button>
             </div>
 
-            {/* Content Area */}
             <div className="bg-white rounded-lg shadow p-6">
 
-                {/* --- OVERVIEW TAB --- */}
                 {activeTab === 'overview' && (
                     globalStats ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -174,14 +161,12 @@ export default function StatsScreen() {
                             </div>
                         </div>
                     ) : (
-                        // 2. EMPTY STATE FOR OVERVIEW
                         <div className="text-center py-10 text-gray-500">
                             <p className="text-xl">No overview data available for this week.</p>
                         </div>
                     )
                 )}
 
-                {/* --- ROOMS TAB --- */}
                 {activeTab === 'rooms' && (
                     <div className="overflow-x-auto">
                         <table className="min-w-full text-left">
@@ -223,7 +208,6 @@ export default function StatsScreen() {
                     </div>
                 )}
 
-                {/* --- USERS TAB --- */}
                 {activeTab === 'users' && (
                     <div className="overflow-x-auto">
                         <table className="min-w-full text-left">

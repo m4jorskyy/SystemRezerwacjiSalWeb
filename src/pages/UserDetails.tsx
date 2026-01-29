@@ -8,17 +8,14 @@ export default function UserDetails() {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    // Fix: Explicitly type the state as an array of UserStats
     const [history, setHistory] = useState<UserStats[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Convert id to number since useParams returns a string
                 const data = await getUsersStatsById(Number(id));
 
-                // Fix: Use .getTime() for arithmetic operations on dates
                 const sorted = data.sort((a, b) =>
                     new Date(b.weekStart).getTime() - new Date(a.weekStart).getTime()
                 );

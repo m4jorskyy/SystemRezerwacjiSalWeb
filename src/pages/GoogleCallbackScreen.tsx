@@ -25,11 +25,9 @@ export default function GoogleCallbackScreen() {
                     }
 
                     await sendGoogleCode(code, user.id);
-                    // Sukces! Przekieruj tam, skąd użytkownik przyszedł
                     navigate(returnTo, { replace: true });
                 } catch (error) {
                     console.error("Błąd auth:", error);
-                    // W razie błędu też wróć, ewentualnie pokaż komunikat
                     navigate(returnTo, { replace: true });
                 }
             };

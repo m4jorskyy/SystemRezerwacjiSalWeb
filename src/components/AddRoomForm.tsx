@@ -134,7 +134,6 @@ export default function AddRoomForm() {
                     </div>
                 </div>
 
-                {/* Submit Button */}
                 <div className="pt-4">
                     <input
                         type="submit"
